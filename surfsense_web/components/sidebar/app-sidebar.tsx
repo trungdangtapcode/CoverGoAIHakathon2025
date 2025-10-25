@@ -3,6 +3,7 @@
 import {
 	AlertCircle,
 	BookOpen,
+	Brain,
 	Cable,
 	ExternalLink,
 	FileStack,
@@ -36,6 +37,7 @@ import {
 // Map of icon names to their components
 export const iconMap: Record<string, LucideIcon> = {
 	BookOpen,
+	Brain,
 	Cable,
 	FileStack,
 	Undo2,

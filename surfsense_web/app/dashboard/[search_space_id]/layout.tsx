@@ -79,6 +79,12 @@ export default function DashboardLayout({
 			items: [],
 		},
 		{
+			title: "Flashcards",
+			url: `/dashboard/${search_space_id}/flashcards`,
+			icon: "Brain",
+			items: [],
+		},
+		{
 			title: "Logs",
 			url: `/dashboard/${search_space_id}/logs`,
 			icon: "FileText",
