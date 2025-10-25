@@ -2998,3 +2998,10 @@ INFO:     127.0.0.1:64544 - "GET /api/v1/chats/?limit=5&skip=0&search_space_id=1
 INFO:     127.0.0.1:64708 - "GET /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64873 - "OPTIONS /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64873 - "GET /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49266 - "GET /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49463 - "GET /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49686 - "OPTIONS /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49686 - "GET /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49893 - "OPTIONS /api/v1/searchspaces/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49892 - "GET /api/v1/chats/?limit=5&skip=0&search_space_id=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49893 - "GET /api/v1/searchspaces/1 HTTP/1.1" 200 OK

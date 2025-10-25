@@ -697,3 +697,4 @@ To set up the editor integration, add something like REACT_EDITOR=atom to the .e
  GET /dashboard/1/chats 200 in 642ms
  GET /dashboard/1/chats 200 in 263ms
  GET /favicon.ico?favicon.3c5262e8.ico 200 in 263ms
+ ✓ Compiled in 255ms
