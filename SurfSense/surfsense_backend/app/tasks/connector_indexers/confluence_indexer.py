@@ -277,7 +277,7 @@ async def index_confluence_pages(
                                     f"Content Preview: {content_preview}\n\n"
                                 )
                             summary_content += f"Comments: {comment_count}"
-                            summary_embedding = config.embedding_model_instance.embed(
+                            summary_embedding = config.embedding_model_instance().embed(
                                 summary_content
                             )
 
@@ -337,7 +337,7 @@ async def index_confluence_pages(
                             content_preview += "..."
                         summary_content += f"Content Preview: {content_preview}\n\n"
                     summary_content += f"Comments: {comment_count}"
-                    summary_embedding = config.embedding_model_instance.embed(
+                    summary_embedding = config.embedding_model_instance().embed(
                         summary_content
                     )
 

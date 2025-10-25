@@ -140,7 +140,7 @@ async def generate_document_summary(
     else:
         enhanced_summary_content = summary_content
 
-    summary_embedding = config.embedding_model_instance.embed(enhanced_summary_content)
+    summary_embedding = config.embedding_model_instance().embed(enhanced_summary_content)
 
     return enhanced_summary_content, summary_embedding
 
@@ -158,9 +158,9 @@ async def create_document_chunks(content: str) -> list[Chunk]:
     return [
         Chunk(
             content=chunk.text,
-            embedding=config.embedding_model_instance.embed(chunk.text),
+            embedding=config.embedding_model_instance().embed(chunk.text),
         )
-        for chunk in config.chunker_instance.chunk(content)
+        for chunk in config.chunker_instance().chunk(content)
     ]
 
 

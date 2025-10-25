@@ -256,21 +256,32 @@ async def index_github_repos(
                             else:
                                 summary_content = f"GitHub file: {full_path_key}\n\n{file_content[:1000]}..."
                                 summary_embedding = (
-                                    config.embedding_model_instance.embed(
+                                    config.embedding_model_instance().embed(
                                         summary_content
                                     )
                                 )
 
                             # Chunk the content
                             try:
-                                if hasattr(config, "code_chunker_instance"):
-                                    chunks_data = [
-                                        await create_document_chunks(file_content)
-                                    ][0]
+                                # Try code chunker first for code files, fall back to regular chunker
+                                if hasattr(config, "code_chunker_instance") and file_extension in [
+                                    "py", "js", "ts", "java", "cpp", "c", "go", "rs", "rb", "php"
+                                ]:
+                                    try:
+                                        chunks_data = [
+                                            {
+                                                "content": chunk.text,
+                                                "embedding": config.embedding_model_instance().embed(chunk.text),
+                                            }
+                                            for chunk in config.code_chunker_instance().chunk(file_content)
+                                        ]
+                                    except Exception as code_chunk_err:
+                                        logger.warning(
+                                            f"Code chunker failed for {full_path_key}, using regular chunker: {code_chunk_err}"
+                                        )
+                                        chunks_data = await create_document_chunks(file_content)
                                 else:
-                                    chunks_data = await create_document_chunks(
-                                        file_content
-                                    )
+                                    chunks_data = await create_document_chunks(file_content)
                             except Exception as chunk_err:
                                 logger.error(
                                     f"Failed to chunk file {full_path_key}: {chunk_err}"
@@ -326,27 +337,33 @@ async def index_github_repos(
                         summary_content = (
                             f"GitHub file: {full_path_key}\n\n{file_content[:1000]}..."
                         )
-                        summary_embedding = config.embedding_model_instance.embed(
+                        summary_embedding = config.embedding_model_instance().embed(
                             summary_content
                         )
 
                     # Chunk the content
                     try:
-                        chunks_data = [await create_document_chunks(file_content)][0]
-
-                        # Use code chunker if available, otherwise regular chunker
-                        if hasattr(config, "code_chunker_instance"):
-                            chunks_data = [
-                                {
-                                    "content": chunk.text,
-                                    "embedding": config.embedding_model_instance.embed(
-                                        chunk.text
-                                    ),
-                                }
-                                for chunk in config.code_chunker_instance.chunk(
-                                    file_content
+                        # Try code chunker first for code files, fall back to regular chunker
+                        if hasattr(config, "code_chunker_instance") and file_extension in [
+                            "py", "js", "ts", "java", "cpp", "c", "go", "rs", "rb", "php"
+                        ]:
+                            try:
+                                chunks_data = [
+                                    {
+                                        "content": chunk.text,
+                                        "embedding": config.embedding_model_instance().embed(
+                                            chunk.text
+                                        ),
+                                    }
+                                    for chunk in config.code_chunker_instance().chunk(
+                                        file_content
+                                    )
+                                ]
+                            except Exception as code_chunk_err:
+                                logger.warning(
+                                    f"Code chunker failed for {full_path_key}, using regular chunker: {code_chunk_err}"
                                 )
-                            ]
+                                chunks_data = await create_document_chunks(file_content)
                         else:
                             chunks_data = await create_document_chunks(file_content)
 

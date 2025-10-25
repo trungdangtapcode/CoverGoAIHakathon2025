@@ -34,7 +34,7 @@ class DocumentHybridSearchRetriever:
         from app.db import Document, SearchSpace
 
         # Get embedding for the query
-        embedding_model = config.embedding_model_instance
+        embedding_model = config.embedding_model_instance()
         query_embedding = embedding_model.embed(query_text)
 
         # Build the base query with user ownership check
@@ -138,7 +138,7 @@ class DocumentHybridSearchRetriever:
         from app.db import Document, DocumentType, SearchSpace
 
         # Get embedding for the query
-        embedding_model = config.embedding_model_instance
+        embedding_model = config.embedding_model_instance()
         query_embedding = embedding_model.embed(query_text)
 
         # Constants for RRF calculation

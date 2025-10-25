@@ -327,7 +327,7 @@ async def index_luma_events(
                                 if len(description) > 1000:
                                     desc_preview += "..."
                                 summary_content += f"Description: {desc_preview}\n"
-                            summary_embedding = config.embedding_model_instance.embed(
+                            summary_embedding = config.embedding_model_instance().embed(
                                 summary_content
                             )
 
@@ -404,7 +404,7 @@ async def index_luma_events(
                             desc_preview += "..."
                         summary_content += f"Description: {desc_preview}\n"
 
-                    summary_embedding = config.embedding_model_instance.embed(
+                    summary_embedding = config.embedding_model_instance().embed(
                         summary_content
                     )
 
