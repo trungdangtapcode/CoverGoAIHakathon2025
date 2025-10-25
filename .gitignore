@@ -115,6 +115,10 @@ podcasts/
 .env
 node_modules/
 .ruff_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 .clinerules/byterover-rules.md
 .kilocode/rules/byterover-rules.md
 .roo/rules/byterover-rules.md
