@@ -127,6 +127,10 @@ __pycache__/
 .kiro/steering/byterover-rules.md
 .qoder/rules/byterover-rules.md
 .augment/rules/byterover-rules.md
+<<<<<<< HEAD
 *.log
 start_dev.sh
 >>>>>>> b285107 (Initial commit: SurfSense project with frontend, backend, and browser extension)
+=======
+start_dev.sh
+>>>>>>> 0eda6aa (Remove log files)
