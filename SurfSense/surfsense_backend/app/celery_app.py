@@ -34,6 +34,15 @@ CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:63
 # Examples: "1m" (every minute), "5m" (every 5 minutes), "1h" (every hour)
 SCHEDULE_CHECKER_INTERVAL = os.getenv("SCHEDULE_CHECKER_INTERVAL", "2m")
 
+# Get activity reminder schedule from environment
+# Default: daily at 8:00 AM
+REMINDER_EMAIL_ENABLED = os.getenv("REMINDER_EMAIL_ENABLED", "true").lower() == "true"
+REMINDER_EMAIL_HOUR = int(os.getenv("REMINDER_EMAIL_HOUR", "8"))  # Hour of day (0-23)
+REMINDER_EMAIL_MINUTE = int(os.getenv("REMINDER_EMAIL_MINUTE", "0"))  # Minute of hour (0-59)
+
+# For testing: send every N minutes (set to 0 to disable periodic testing mode)
+REMINDER_TEST_INTERVAL_MINUTES = int(os.getenv("REMINDER_TEST_INTERVAL_MINUTES", "1"))  # 0 = disabled, 1+ = every N minutes
+
 
 def parse_schedule_interval(interval: str) -> dict:
     """Parse interval string into crontab parameters.
@@ -79,6 +88,7 @@ celery_app = Celery(
         "app.tasks.celery_tasks.podcast_tasks",
         "app.tasks.celery_tasks.connector_tasks",
         "app.tasks.celery_tasks.schedule_checker_task",
+        "app.tasks.celery_tasks.reminder_tasks",
     ],
 )
 
@@ -122,3 +132,48 @@ celery_app.conf.beat_schedule = {
         },
     },
 }
+
+# Add activity reminder schedule if enabled
+if REMINDER_EMAIL_ENABLED:
+    if REMINDER_TEST_INTERVAL_MINUTES > 0:
+        # Testing mode: send every N minutes
+        celery_app.conf.beat_schedule["send-test-reminders"] = {
+            "task": "send_all_activity_reminders",
+            "schedule": crontab(minute=f"*/{REMINDER_TEST_INTERVAL_MINUTES}"),  # Every N minutes
+            "options": {
+                "expires": 50,  # Task expires after 50 seconds
+            },
+        }
+        print(f"🧪 TESTING MODE: Reminders will be sent every {REMINDER_TEST_INTERVAL_MINUTES} minute(s)")
+    else:
+        # Production mode: send once daily at specified time
+        celery_app.conf.beat_schedule["send-daily-activity-reminders"] = {
+            "task": "send_all_activity_reminders",
+            "schedule": crontab(hour=REMINDER_EMAIL_HOUR, minute=REMINDER_EMAIL_MINUTE),
+            "options": {
+                "expires": 3600,  # Task expires after 1 hour if not picked up
+            },
+        }
+        print(f"📅 PRODUCTION MODE: Reminders will be sent daily at {REMINDER_EMAIL_HOUR:02d}:{REMINDER_EMAIL_MINUTE:02d}")
+    
+    # Option B: Uncomment for multiple reminders per day
+    # Morning reminder at 8:00 AM
+    # celery_app.conf.beat_schedule["morning-reminder"] = {
+    #     "task": "send_all_activity_reminders",
+    #     "schedule": crontab(hour=8, minute=0),
+    #     "options": {"expires": 3600},
+    # }
+    
+    # Evening reminder at 6:00 PM
+    # celery_app.conf.beat_schedule["evening-reminder"] = {
+    #     "task": "send_all_activity_reminders",
+    #     "schedule": crontab(hour=18, minute=0),
+    #     "options": {"expires": 3600},
+    # }
+    
+    # Option C: Every few hours (example: every 4 hours)
+    # celery_app.conf.beat_schedule["periodic-reminder"] = {
+    #     "task": "send_all_activity_reminders",
+    #     "schedule": crontab(minute=0, hour="*/4"),  # Every 4 hours
+    #     "options": {"expires": 3600},
+    # }

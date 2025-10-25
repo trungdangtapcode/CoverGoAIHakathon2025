@@ -18,6 +18,13 @@ from .documents import (
     ExtensionDocumentMetadata,
     PaginatedResponse,
 )
+from .insights import (
+    ActionItem,
+    ActivityInsight,
+    InsightRequest,
+    InsightResponse,
+    Plan,
+)
 from .llm_config import LLMConfigBase, LLMConfigCreate, LLMConfigRead, LLMConfigUpdate
 from .logs import LogBase, LogCreate, LogFilter, LogRead, LogUpdate
 from .podcasts import (
@@ -46,6 +53,8 @@ from .users import UserCreate, UserRead, UserUpdate
 
 __all__ = [
     "AISDKChatRequest",
+    "ActionItem",
+    "ActivityInsight",
     "ChatBase",
     "ChatCreate",
     "ChatRead",
@@ -63,6 +72,8 @@ __all__ = [
     "ExtensionDocumentContent",
     "ExtensionDocumentMetadata",
     "IDModel",
+    "InsightRequest",
+    "InsightResponse",
     "LLMConfigBase",
     "LLMConfigCreate",
     "LLMConfigRead",
@@ -73,6 +84,7 @@ __all__ = [
     "LogRead",
     "LogUpdate",
     "PaginatedResponse",
+    "Plan",
     "PodcastBase",
     "PodcastCreate",
     "PodcastGenerateRequest",

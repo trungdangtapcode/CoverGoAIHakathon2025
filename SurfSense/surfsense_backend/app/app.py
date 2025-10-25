@@ -10,6 +10,9 @@ from app.routes import router as crud_router
 from app.routes.tasks_routes import router as tasks_router
 from app.routes.study_routes import router as study_router
 from app.routes.notes_routes import router as notes_router
+from app.routes.email_routes import router as email_router
+from app.routes.insights_routes import router as insights_router
+from app.routes.activity_reminder_routes import router as activity_reminder_router
 from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import SECRET, auth_backend, current_active_user, fastapi_users
 
@@ -83,6 +86,9 @@ app.include_router(crud_router, prefix="/api/v1", tags=["crud"])
 app.include_router(tasks_router, prefix="/api/v1", tags=["tasks"])
 app.include_router(study_router, prefix="/api/v1", tags=["study"])
 app.include_router(notes_router, prefix="/api/v1", tags=["notes"])
+app.include_router(email_router, prefix="/api/v1", tags=["email"])
+app.include_router(insights_router, prefix="/api/v1", tags=["insights"])
+app.include_router(activity_reminder_router, prefix="/api/v1", tags=["reminders"])
 
 
 @app.get("/verify-token")

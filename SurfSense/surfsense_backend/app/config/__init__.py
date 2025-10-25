@@ -103,6 +103,14 @@ class Config:
     STT_SERVICE_API_BASE = os.getenv("STT_SERVICE_API_BASE")
     STT_SERVICE_API_KEY = os.getenv("STT_SERVICE_API_KEY")
 
+    # SMTP Email Configuration
+    SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_SENDER_EMAIL = os.getenv("SMTP_SENDER_EMAIL")
+    SMTP_SENDER_PASSWORD = os.getenv("SMTP_SENDER_PASSWORD")
+    SMTP_SENDER_NAME = os.getenv("SMTP_SENDER_NAME", "SurfSense")
+    SMTP_USE_TLS = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+
     # Validation Checks moved to property accessors to avoid eager loading
 
     @classmethod
