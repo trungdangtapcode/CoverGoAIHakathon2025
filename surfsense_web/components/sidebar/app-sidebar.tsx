@@ -213,6 +213,10 @@ export const AppSidebar = memo(function AppSidebar({
 								</div>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-medium">Strawberries</span>
+<<<<<<< HEAD
+=======
+									<span className="truncate text-xs">beta v0.0.8</span>
+>>>>>>> b285107 (Initial commit: SurfSense project with frontend, backend, and browser extension)
 								</div>
 							</div>
 						</SidebarMenuButton>
@@ -221,15 +225,23 @@ export const AppSidebar = memo(function AppSidebar({
 			</SidebarHeader>
 
 			<SidebarContent className="space-y-6">
+<<<<<<< HEAD
 				{/* Recent Chats section - moved above Platform links */}
+=======
+				<NavMain items={processedNavMain} />
+
+>>>>>>> b285107 (Initial commit: SurfSense project with frontend, backend, and browser extension)
 				{processedRecentChats.length > 0 && (
 					<div className="space-y-2">
 						<NavProjects chats={processedRecentChats} />
 					</div>
 				)}
+<<<<<<< HEAD
 
 				{/* Platform links */}
 				<NavMain items={processedNavMain} />
+=======
+>>>>>>> b285107 (Initial commit: SurfSense project with frontend, backend, and browser extension)
 			</SidebarContent>
 			<SidebarFooter>
 				<NavSecondary items={processedNavSecondary} className="mt-auto" />
