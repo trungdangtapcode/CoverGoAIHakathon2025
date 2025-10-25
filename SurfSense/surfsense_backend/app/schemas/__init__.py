@@ -36,6 +36,9 @@ from .search_source_connector import (
 from .search_space import (
     SearchSpaceBase,
     SearchSpaceCreate,
+    SearchSpaceImportRequest,
+    SearchSpaceImportResponse,
+    SearchSpaceLinkCreate,
     SearchSpaceRead,
     SearchSpaceUpdate,
 )
@@ -81,6 +84,9 @@ __all__ = [
     "SearchSourceConnectorUpdate",
     "SearchSpaceBase",
     "SearchSpaceCreate",
+    "SearchSpaceImportRequest",
+    "SearchSpaceImportResponse",
+    "SearchSpaceLinkCreate",
     "SearchSpaceRead",
     "SearchSpaceUpdate",
     "TimestampModel",

@@ -119,6 +119,7 @@ class DocumentHybridSearchRetriever:
         user_id: str,
         search_space_id: int | None = None,
         document_type: str | None = None,
+        include_linked_spaces: bool = False,
     ) -> list:
         """
         Combine vector similarity and full-text search results using Reciprocal Rank Fusion.
@@ -129,13 +130,14 @@ class DocumentHybridSearchRetriever:
             user_id: The ID of the user performing the search
             search_space_id: Optional search space ID to filter results
             document_type: Optional document type to filter results (e.g., "FILE", "CRAWLED_URL")
+            include_linked_spaces: If True and search_space_id is provided, also search in linked SearchSpaces
 
         """
         from sqlalchemy import func, select, text
         from sqlalchemy.orm import joinedload
 
         from app.config import config
-        from app.db import Document, DocumentType, SearchSpace
+        from app.db import Document, DocumentType, SearchSpace, searchspace_links
 
         # Get embedding for the query
         embedding_model = config.embedding_model_instance()
@@ -152,9 +154,35 @@ class DocumentHybridSearchRetriever:
         # Base conditions for document filtering
         base_conditions = [SearchSpace.user_id == user_id]
 
-        # Add search space filter if provided
+        # Add search space filter with optional linked spaces
         if search_space_id is not None:
-            base_conditions.append(Document.search_space_id == search_space_id)
+            if include_linked_spaces:
+                try:
+                    # Get all linked SearchSpace IDs (bidirectional)
+                    # Outgoing links: spaces this space links TO
+                    outgoing_links_query = select(searchspace_links.c.target_space_id).where(
+                        searchspace_links.c.source_space_id == search_space_id
+                    )
+                    outgoing_result = await self.db_session.execute(outgoing_links_query)
+                    outgoing_linked_ids = [row[0] for row in outgoing_result.all()]
+
+                    # Incoming links: spaces that link TO this space
+                    incoming_links_query = select(searchspace_links.c.source_space_id).where(
+                        searchspace_links.c.target_space_id == search_space_id
+                    )
+                    incoming_result = await self.db_session.execute(incoming_links_query)
+                    incoming_linked_ids = [row[0] for row in incoming_result.all()]
+
+                    # Combine all linked spaces (bidirectional) with the original space
+                    all_linked_ids = list(set(outgoing_linked_ids + incoming_linked_ids))
+                    all_space_ids = [search_space_id] + all_linked_ids
+                    base_conditions.append(Document.search_space_id.in_(all_space_ids))
+                except Exception as e:
+                    # If linked space fetching fails, fall back to searching only in the current space
+                    print(f"Warning: Failed to fetch linked spaces for search_space_id {search_space_id}: {e}")
+                    base_conditions.append(Document.search_space_id == search_space_id)
+            else:
+                base_conditions.append(Document.search_space_id == search_space_id)
 
         # Add document type filter if provided
         if document_type is not None:
@@ -244,8 +272,6 @@ class DocumentHybridSearchRetriever:
         serialized_results = []
         for document, score in documents_with_scores:
             # Fetch associated chunks for this document
-            from sqlalchemy import select
-
             from app.db import Chunk
 
             chunks_query = (

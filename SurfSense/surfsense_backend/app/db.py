@@ -15,6 +15,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    Table,
     Text,
     UniqueConstraint,
     text,
@@ -133,6 +134,39 @@ class LogStatus(str, Enum):
 
 class Base(DeclarativeBase):
     pass
+
+
+# Association table for SearchSpace to SearchSpace relationships (Obsidian-like graph)
+searchspace_links = Table(
+    "searchspace_links",
+    Base.metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column(
+        "source_space_id",
+        Integer,
+        ForeignKey("searchspaces.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    ),
+    Column(
+        "target_space_id",
+        Integer,
+        ForeignKey("searchspaces.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    ),
+    Column(
+        "created_at",
+        TIMESTAMP(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(UTC),
+    ),
+    UniqueConstraint(
+        "source_space_id",
+        "target_space_id",
+        name="uq_searchspace_links_source_target",
+    ),
+)
 
 
 class TimestampMixin:
@@ -264,6 +298,16 @@ class SearchSpace(BaseModel, TimestampMixin):
         "UserSearchSpacePreference",
         back_populates="search_space",
         cascade="all, delete-orphan",
+    )
+    
+    # SearchSpace to SearchSpace relationships (Obsidian-like graph)
+    # SearchSpaces that THIS space links to (outgoing links)
+    linked_search_spaces = relationship(
+        "SearchSpace",
+        secondary="searchspace_links",
+        primaryjoin="SearchSpace.id==searchspace_links.c.source_space_id",
+        secondaryjoin="SearchSpace.id==searchspace_links.c.target_space_id",
+        backref="linked_by_search_spaces",
     )
 
 
