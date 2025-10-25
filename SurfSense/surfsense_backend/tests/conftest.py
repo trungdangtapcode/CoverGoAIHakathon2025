@@ -136,13 +136,16 @@ async def test_document(async_session: AsyncSession, test_search_space):
 @pytest_asyncio.fixture(scope="function")
 async def test_chat(async_session: AsyncSession, test_search_space):
     """Create a test chat"""
-    from app.db import Chat
+    from app.db import Chat, ChatType
 
     chat = Chat(
         search_space_id=test_search_space.id,
-        content="What is AI?",
-        response="AI stands for Artificial Intelligence...",
-        chat_type="QNA",
+        type=ChatType.QNA,
+        title="AI Discussion",
+        messages=[
+            {"role": "user", "content": "What is AI?"},
+            {"role": "assistant", "content": "AI stands for Artificial Intelligence..."}
+        ],
     )
     async_session.add(chat)
     await async_session.commit()

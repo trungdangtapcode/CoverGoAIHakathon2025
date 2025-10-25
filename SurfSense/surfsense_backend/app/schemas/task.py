@@ -47,7 +47,7 @@ class TaskRead(TaskBase, IDModel, TimestampModel):
 
     # Timestamps
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
 
     # Linked resources

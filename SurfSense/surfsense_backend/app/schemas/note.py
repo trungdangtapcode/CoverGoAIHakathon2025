@@ -33,7 +33,7 @@ class NoteRead(NoteBase, IDModel, TimestampModel):
     user_id: uuid.UUID
     source_chat_id: Optional[int] = None
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 

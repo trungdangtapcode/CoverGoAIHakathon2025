@@ -158,16 +158,20 @@ class NoteService:
 
         content_parts = []
 
-        # Add chat metadata if available
-        if hasattr(chat, 'chat_type'):
-            content_parts.append(f"Chat Type: {chat.chat_type}")
+        # Add chat title
+        if hasattr(chat, 'title') and chat.title:
+            content_parts.append(f"# {chat.title}\n")
 
-        # Add main content
-        if hasattr(chat, 'content') and chat.content:
-            content_parts.append(f"\nContent:\n{chat.content}")
+        # Add chat type if available
+        if hasattr(chat, 'type'):
+            content_parts.append(f"Type: {chat.type}\n")
 
-        # Add response if available
-        if hasattr(chat, 'response') and chat.response:
-            content_parts.append(f"\nResponse:\n{chat.response}")
+        # Format messages
+        if hasattr(chat, 'messages') and chat.messages:
+            content_parts.append("\n## Conversation:\n")
+            for msg in chat.messages:
+                role = msg.get('role', 'unknown')
+                content = msg.get('content', '')
+                content_parts.append(f"**{role.capitalize()}**: {content}\n")
 
         return "\n".join(content_parts) if content_parts else "Note created from chat"

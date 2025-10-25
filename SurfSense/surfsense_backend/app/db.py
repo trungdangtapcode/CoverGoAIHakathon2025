@@ -462,6 +462,7 @@ class Task(BaseModel, TimestampMixin):
 
     # Timestamps
     due_date = Column(TIMESTAMP, nullable=True)
+    updated_at = Column(TIMESTAMP, nullable=True)
     completed_at = Column(TIMESTAMP, nullable=True)
 
     # Auto-linked resources
@@ -487,6 +488,8 @@ class Note(BaseModel, TimestampMixin):
     source_chat_id = Column(
         Integer, ForeignKey("chats.id", ondelete="SET NULL"), nullable=True
     )
+
+    updated_at = Column(TIMESTAMP, nullable=True)
 
     search_space = relationship("SearchSpace")
     user = relationship("User")
