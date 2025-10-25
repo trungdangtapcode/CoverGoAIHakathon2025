@@ -80,6 +80,7 @@ async def stream_connector_search_results(
 
     # Run the graph directly
     print("\nRunning the complete researcher workflow...")
+    print('ccbm 600 - researcher config connector:', config["configurable"]["connectors_to_search"])  # Debug print
 
     # Use streaming with config parameter
     async for chunk in researcher_graph.astream(

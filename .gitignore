@@ -1,127 +1,10 @@
 # Python
-# Python
 __pycache__/
 **/__pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-<<<<<<< HEAD
-**/__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-=======
-*.pyc
-*.pyo
-*.pyd
->>>>>>> e9946bf (Remove log files)
-
-# Virtual Environment
-.venv/
-venv/
-ENV/
-env/
-.virtualenv/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Pytest
-.pytest_cache/
-.coverage
-htmlcov/
-*.cover
-.hypothesis/
-
-# Migrations (keep migration files but ignore pycache)
-alembic/versions/__pycache__/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Logs
-*.log
-logs/
-*.out
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# Test files (if you want to ignore test output)
-.tox/
-.nox/
-
-# MacOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Temporary files
-*.tmp
-*.temp
-tmp/
-temp/
-
-# Scripts that are local only
-run_migrations.sh
-fix_config_calls.sh
-create_tables_direct.py
-migration_output.log
-start_dev.sh
-
-# Editor backups
-*~
-*.bak
-*.swp
-*.swo
-<<<<<<< HEAD
 *.pyc
 *.pyo
 *.pyd
@@ -237,16 +120,8 @@ node_modules/
 .flashrank_cache*
 podcasts/
 .ruff_cache/
-=======
-
-# Additional project-specific ignores
-.flashrank_cache*
-podcasts/
-node_modules/
-.ruff_cache/
 
 # AI tool rules
->>>>>>> e9946bf (Remove log files)
 .clinerules/byterover-rules.md
 .kilocode/rules/byterover-rules.md
 .roo/rules/byterover-rules.md

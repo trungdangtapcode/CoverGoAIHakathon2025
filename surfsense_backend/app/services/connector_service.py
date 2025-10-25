@@ -1203,7 +1203,18 @@ class ConnectorService:
         Returns:
             tuple: (sources_info, langchain_documents)
         """
+        print("\n" + "=" * 80)
+        print("clmm 700 - GITHUB CONNECTOR SEARCH START")
+        print("=" * 80)
+        print(f"  user_query: {user_query}")
+        print(f"  user_id: {user_id}")
+        print(f"  search_space_id: {search_space_id}")
+        print(f"  top_k: {top_k}")
+        print(f"  search_mode: {search_mode}")
+        print("=" * 80 + "\n")
+        
         if search_mode == SearchMode.CHUNKS:
+            print("clmm 701 - Using CHUNKS search mode, calling chunk_retriever.hybrid_search")
             github_chunks = await self.chunk_retriever.hybrid_search(
                 query_text=user_query,
                 top_k=top_k,
@@ -1211,7 +1222,9 @@ class ConnectorService:
                 search_space_id=search_space_id,
                 document_type="GITHUB_CONNECTOR",
             )
+            print(f"clmm 702 - chunk_retriever returned {len(github_chunks) if github_chunks else 0} chunks")
         elif search_mode == SearchMode.DOCUMENTS:
+            print("clmm 703 - Using DOCUMENTS search mode, calling document_retriever.hybrid_search")
             github_chunks = await self.document_retriever.hybrid_search(
                 query_text=user_query,
                 top_k=top_k,
@@ -1219,11 +1232,14 @@ class ConnectorService:
                 search_space_id=search_space_id,
                 document_type="GITHUB_CONNECTOR",
             )
+            print(f"clmm 704 - document_retriever returned {len(github_chunks) if github_chunks else 0} documents")
             # Transform document retriever results to match expected format
             github_chunks = self._transform_document_results(github_chunks)
+            print(f"clmm 705 - After transformation: {len(github_chunks) if github_chunks else 0} chunks")
 
         # Early return if no results
         if not github_chunks:
+            print("clmm 706 - No GitHub chunks found, returning empty results")
             return {
                 "id": 8,
                 "name": "GitHub",
@@ -1232,12 +1248,22 @@ class ConnectorService:
             }, []
 
         # Process each chunk and create sources directly without deduplication
+        print(f"clmm 707 - Processing {len(github_chunks)} GitHub chunks to create sources")
         sources_list = []
         async with self.counter_lock:
             for _i, chunk in enumerate(github_chunks):
                 # Extract document metadata
                 document = chunk.get("document", {})
                 metadata = document.get("metadata", {})
+                
+                if _i < 3:  # Log first 3 chunks in detail
+                    print(f"\nclmm 708 - Chunk #{_i + 1}:")
+                    print(f"  chunk_id: {chunk.get('chunk_id')}")
+                    print(f"  document.id: {document.get('id')}")
+                    print(f"  document.title: {document.get('title', 'N/A')}")
+                    print(f"  document.document_type: {document.get('document_type')}")
+                    print(f"  metadata.url: {metadata.get('url', 'N/A')}")
+                    print(f"  content preview: {chunk.get('content', '')[:100]}...")
 
                 # Create a source entry
                 source = {
@@ -1255,12 +1281,18 @@ class ConnectorService:
                 sources_list.append(source)
 
         # Create result object
+        print(f"\nclmm 709 - Created {len(sources_list)} GitHub sources")
         result_object = {
             "id": 8,
             "name": "GitHub",
             "type": "GITHUB_CONNECTOR",
             "sources": sources_list,
         }
+        
+        print("clmm 710 - Returning GitHub search results")
+        print(f"  result_object.sources count: {len(result_object['sources'])}")
+        print(f"  github_chunks count: {len(github_chunks)}")
+        print("=" * 80 + "\n")
 
         return result_object, github_chunks
 

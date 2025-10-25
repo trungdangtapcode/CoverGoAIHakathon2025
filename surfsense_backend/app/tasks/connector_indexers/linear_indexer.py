@@ -274,7 +274,7 @@ async def index_linear_issues(
                             if description:
                                 summary_content += f"Description: {description}\n\n"
                             summary_content += f"Comments: {comment_count}"
-                            summary_embedding = config.embedding_model_instance.embed(
+                            summary_embedding = config.embedding_model_instance().embed(
                                 summary_content
                             )
 
@@ -335,7 +335,7 @@ async def index_linear_issues(
                     if description:
                         summary_content += f"Description: {description}\n\n"
                     summary_content += f"Comments: {comment_count}"
-                    summary_embedding = config.embedding_model_instance.embed(
+                    summary_embedding = config.embedding_model_instance().embed(
                         summary_content
                     )
 

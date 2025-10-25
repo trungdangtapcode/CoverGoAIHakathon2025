@@ -69,6 +69,7 @@ async def index_github_repos(
     errors = []
 
     try:
+        print('ccbm 652 - trying to index github repos')  # Debug print
         # 1. Get the GitHub connector from the database
         await task_logger.log_task_progress(
             log_entry,
@@ -128,6 +129,7 @@ async def index_github_repos(
 
         try:
             github_client = GitHubConnector(token=github_pat)
+            print('ccbm 649 - github_client initialized')  # Debug print
         except ValueError as e:
             await task_logger.log_task_failure(
                 log_entry,
@@ -159,6 +161,7 @@ async def index_github_repos(
 
         # 6. Iterate through selected repositories and index files
         for repo_full_name in repo_full_names_to_index:
+            print('ccbm 646 - repo_full_name:', repo_full_name)  # Debug print
             if not repo_full_name or not isinstance(repo_full_name, str):
                 logger.warning(f"Skipping invalid repository entry: {repo_full_name}")
                 continue
@@ -193,6 +196,7 @@ async def index_github_repos(
                     file_content = github_client.get_file_content(
                         repo_full_name, file_path
                     )
+                    print("ccbm 637 file_content:", file_content[:100])  # Debug print
 
                     if file_content is None:
                         logger.warning(
@@ -252,21 +256,32 @@ async def index_github_repos(
                             else:
                                 summary_content = f"GitHub file: {full_path_key}\n\n{file_content[:1000]}..."
                                 summary_embedding = (
-                                    config.embedding_model_instance.embed(
+                                    config.embedding_model_instance().embed(
                                         summary_content
                                     )
                                 )
 
                             # Chunk the content
                             try:
-                                if hasattr(config, "code_chunker_instance"):
-                                    chunks_data = [
-                                        await create_document_chunks(file_content)
-                                    ][0]
+                                # Try code chunker first for code files, fall back to regular chunker
+                                if hasattr(config, "code_chunker_instance") and file_extension in [
+                                    "py", "js", "ts", "java", "cpp", "c", "go", "rs", "rb", "php"
+                                ]:
+                                    try:
+                                        chunks_data = [
+                                            {
+                                                "content": chunk.text,
+                                                "embedding": config.embedding_model_instance().embed(chunk.text),
+                                            }
+                                            for chunk in config.code_chunker_instance().chunk(file_content)
+                                        ]
+                                    except Exception as code_chunk_err:
+                                        logger.warning(
+                                            f"Code chunker failed for {full_path_key}, using regular chunker: {code_chunk_err}"
+                                        )
+                                        chunks_data = await create_document_chunks(file_content)
                                 else:
-                                    chunks_data = await create_document_chunks(
-                                        file_content
-                                    )
+                                    chunks_data = await create_document_chunks(file_content)
                             except Exception as chunk_err:
                                 logger.error(
                                     f"Failed to chunk file {full_path_key}: {chunk_err}"
@@ -322,27 +337,33 @@ async def index_github_repos(
                         summary_content = (
                             f"GitHub file: {full_path_key}\n\n{file_content[:1000]}..."
                         )
-                        summary_embedding = config.embedding_model_instance.embed(
+                        summary_embedding = config.embedding_model_instance().embed(
                             summary_content
                         )
 
                     # Chunk the content
                     try:
-                        chunks_data = [await create_document_chunks(file_content)][0]
-
-                        # Use code chunker if available, otherwise regular chunker
-                        if hasattr(config, "code_chunker_instance"):
-                            chunks_data = [
-                                {
-                                    "content": chunk.text,
-                                    "embedding": config.embedding_model_instance.embed(
-                                        chunk.text
-                                    ),
-                                }
-                                for chunk in config.code_chunker_instance.chunk(
-                                    file_content
+                        # Try code chunker first for code files, fall back to regular chunker
+                        if hasattr(config, "code_chunker_instance") and file_extension in [
+                            "py", "js", "ts", "java", "cpp", "c", "go", "rs", "rb", "php"
+                        ]:
+                            try:
+                                chunks_data = [
+                                    {
+                                        "content": chunk.text,
+                                        "embedding": config.embedding_model_instance().embed(
+                                            chunk.text
+                                        ),
+                                    }
+                                    for chunk in config.code_chunker_instance().chunk(
+                                        file_content
+                                    )
+                                ]
+                            except Exception as code_chunk_err:
+                                logger.warning(
+                                    f"Code chunker failed for {full_path_key}, using regular chunker: {code_chunk_err}"
                                 )
-                            ]
+                                chunks_data = await create_document_chunks(file_content)
                         else:
                             chunks_data = await create_document_chunks(file_content)
 

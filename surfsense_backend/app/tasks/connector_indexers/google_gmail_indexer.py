@@ -240,7 +240,7 @@ async def index_google_gmail_messages(
                             summary_content = f"Google Gmail Message: {subject}\n\n"
                             summary_content += f"Sender: {sender}\n"
                             summary_content += f"Date: {date_str}\n"
-                            summary_embedding = config.embedding_model_instance.embed(
+                            summary_embedding = config.embedding_model_instance().embed(
                                 summary_content
                             )
 
@@ -293,7 +293,7 @@ async def index_google_gmail_messages(
                     summary_content = f"Google Gmail Message: {subject}\n\n"
                     summary_content += f"Sender: {sender}\n"
                     summary_content += f"Date: {date_str}\n"
-                    summary_embedding = config.embedding_model_instance.embed(
+                    summary_embedding = config.embedding_model_instance().embed(
                         summary_content
                     )
 

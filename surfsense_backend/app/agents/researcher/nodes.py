@@ -250,6 +250,8 @@ async def fetch_documents_by_ids(
                         (doc.content),
                     )
                     url = metadata.get("url", "")
+                    
+                    print('ccbm623 - GitHub source url:', url)
 
                 elif doc_type == "YOUTUBE_VIDEO":
                     # Extract YouTube-specific metadata
@@ -710,6 +712,7 @@ async def fetch_relevant_documents(
     # Only use streaming if both writer and state are provided
     streaming_service = state.streaming_service if state is not None else None
 
+    print('ccbm 619 - connectors_to_search = ', connectors_to_search)
     # Handle case when no connectors are selected
     if not connectors_to_search or len(connectors_to_search) == 0:
         if streaming_service and writer:
@@ -756,6 +759,7 @@ async def fetch_relevant_documents(
 
         # Process each selected connector
         for connector in connectors_to_search:
+            print('ccbm620 - connector:', connector)
             # Stream connector being searched
             if streaming_service and writer:
                 connector_emoji = get_connector_emoji(connector)
@@ -926,6 +930,16 @@ async def fetch_relevant_documents(
                         )
 
                 elif connector == "GITHUB_CONNECTOR":
+                    print("\n" + "🔵" * 40)
+                    print("clmm 625 - Processing GITHUB_CONNECTOR")
+                    print(f"  user_query: {user_query}")
+                    print(f"  reformulated_query: {reformulated_query}")
+                    print(f"  user_id: {user_id}")
+                    print(f"  search_space_id: {search_space_id}")
+                    print(f"  top_k: {top_k}")
+                    print(f"  search_mode: {search_mode}")
+                    print("🔵" * 40 + "\n")
+                    
                     (
                         source_object,
                         github_chunks,
@@ -936,11 +950,22 @@ async def fetch_relevant_documents(
                         top_k=top_k,
                         search_mode=search_mode,
                     )
+                    
+                    print("\n" + "🟢" * 40)
+                    print('clmm 626 - GITHUB_CONNECTOR search_github returned:')
+                    print(f'  source_object: {source_object}')
+                    print(f'  github_chunks count: {len(github_chunks) if github_chunks else 0}')
+                    if github_chunks and len(github_chunks) > 0:
+                        print(f'  First chunk preview: {str(github_chunks[0])[:200]}...')
+                    print("🟢" * 40 + "\n")
 
                     # Add to sources and raw documents
                     if source_object:
                         all_sources.append(source_object)
+                        print(f"clmm 627 - Added GitHub source_object to all_sources (total sources: {len(all_sources)})")
                     all_raw_documents.extend(github_chunks)
+                    print(f"clmm 628 - Extended all_raw_documents with {len(github_chunks)} GitHub chunks (total docs: {len(all_raw_documents)})")
+
 
                     # Stream found document count
                     if streaming_service and writer:
@@ -1997,6 +2022,8 @@ async def handle_qna_workflow(
         )
         await connector_service.initialize_counter()
 
+        print('ccbm 617 - configuration.connectors_to_search', configuration.connectors_to_search)
+        
         # Use the reformulated query as a single research question
         research_questions = [reformulated_query, user_query]
 

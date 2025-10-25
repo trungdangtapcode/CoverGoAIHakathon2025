@@ -298,7 +298,7 @@ async def index_slack_messages(
                             chunks = await create_document_chunks(
                                 combined_document_string
                             )
-                            doc_embedding = config.embedding_model_instance.embed(
+                            doc_embedding = config.embedding_model_instance().embed(
                                 combined_document_string
                             )
 
@@ -327,7 +327,7 @@ async def index_slack_messages(
                     # Document doesn't exist - create new one
                     # Process chunks
                     chunks = await create_document_chunks(combined_document_string)
-                    doc_embedding = config.embedding_model_instance.embed(
+                    doc_embedding = config.embedding_model_instance().embed(
                         combined_document_string
                     )
 

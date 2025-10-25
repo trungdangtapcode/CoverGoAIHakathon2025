@@ -256,7 +256,7 @@ async def index_jira_issues(
                             if formatted_issue.get("description"):
                                 summary_content += f"Description: {formatted_issue.get('description')}\n\n"
                             summary_content += f"Comments: {comment_count}"
-                            summary_embedding = config.embedding_model_instance.embed(
+                            summary_embedding = config.embedding_model_instance().embed(
                                 summary_content
                             )
 
@@ -316,7 +316,7 @@ async def index_jira_issues(
                             f"Description: {formatted_issue.get('description')}\n\n"
                         )
                     summary_content += f"Comments: {comment_count}"
-                    summary_embedding = config.embedding_model_instance.embed(
+                    summary_embedding = config.embedding_model_instance().embed(
                         summary_content
                     )
 

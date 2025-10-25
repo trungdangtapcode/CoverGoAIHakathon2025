@@ -263,7 +263,7 @@ async def index_clickup_tasks(
                             else:
                                 summary_content = task_content
                                 summary_embedding = (
-                                    config.embedding_model_instance.embed(task_content)
+                                    config.embedding_model_instance().embed(task_content)
                                 )
 
                             # Process chunks
@@ -322,7 +322,7 @@ async def index_clickup_tasks(
                     else:
                         # Fallback to simple summary if no LLM configured
                         summary_content = task_content
-                        summary_embedding = config.embedding_model_instance.embed(
+                        summary_embedding = config.embedding_model_instance().embed(
                             task_content
                         )
 

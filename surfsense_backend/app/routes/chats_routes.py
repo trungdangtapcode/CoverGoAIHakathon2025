@@ -35,6 +35,22 @@ async def handle_chat_data(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ):
+    # ===== INSPECT REQUEST DATA =====
+    print("\n" + "=" * 80)
+    print("📥 INCOMING REQUEST TO /api/v1/chat")
+    print("=" * 80)
+    print(f"👤 User ID: {user.id}")
+    print(f"📧 User Email: {user.email}")
+    print(f"\n📝 Request Object:")
+    print(f"  - Messages Count: {len(request.messages) if request.messages else 0}")
+    print(f"  - Request Data: {request.data}")
+    print(f"\n💬 Messages:")
+    for idx, msg in enumerate(request.messages if request.messages else [], 1):
+        print(f"  [{idx}] Role: {msg.get('role', 'N/A')}")
+        print(f"      Content: {msg.get('content', 'N/A')[:100]}...")  # First 100 chars
+    print("=" * 80 + "\n")
+    # ===== END INSPECT REQUEST DATA =====
+    
     # Validate and sanitize all input data
     messages = validate_messages(request.messages)
 
@@ -47,9 +63,23 @@ async def handle_chat_data(
 
     # Extract and validate data from request
     request_data = request.data or {}
+    
+    # ===== DETAILED REQUEST DATA INSPECTION =====
+    print("\n" + "🔍" * 40)
+    print("📦 REQUEST DATA DETAILS:")
+    print(f"  - search_space_id: {request_data.get('search_space_id')}")
+    print(f"  - research_mode: {request_data.get('research_mode')}")
+    print(f"  - selected_connectors: {request_data.get('selected_connectors')}")
+    print(f"  - document_ids_to_add_in_context: {request_data.get('document_ids_to_add_in_context')}")
+    print(f"  - search_mode: {request_data.get('search_mode')}")
+    print(f"\n  Full request_data object: {request_data}")
+    print("🔍" * 40 + "\n")
+    # ===== END DETAILED INSPECTION =====
+    
     search_space_id = validate_search_space_id(request_data.get("search_space_id"))
     research_mode = validate_research_mode(request_data.get("research_mode"))
     selected_connectors = validate_connectors(request_data.get("selected_connectors"))
+    print('ccbm557 - Selected Connectors after validation:', selected_connectors)
     document_ids_to_add_in_context = validate_document_ids(
         request_data.get("document_ids_to_add_in_context")
     )

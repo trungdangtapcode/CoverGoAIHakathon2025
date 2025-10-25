@@ -343,7 +343,7 @@ async def add_received_file_document_using_docling(
 
         from app.config import config
 
-        summary_embedding = config.embedding_model_instance.embed(
+        summary_embedding = config.embedding_model_instance().embed(
             enhanced_summary_content
         )
 

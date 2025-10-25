@@ -2,9 +2,8 @@ import os
 import shutil
 from pathlib import Path
 
-from chonkie import AutoEmbeddings, CodeChunker, RecursiveChunker
+# Heavy imports moved to lazy-loading properties to speed up module import during migrations
 from dotenv import load_dotenv
-from rerankers import Reranker
 
 # Get the base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -65,21 +64,17 @@ class Config:
 
     # Chonkie Configuration | Edit this to your needs
     EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
-    embedding_model_instance = AutoEmbeddings.get_embeddings(EMBEDDING_MODEL)
-    chunker_instance = RecursiveChunker(
-        chunk_size=getattr(embedding_model_instance, "max_seq_length", 512)
-    )
-    code_chunker_instance = CodeChunker(
-        chunk_size=getattr(embedding_model_instance, "max_seq_length", 512)
-    )
+    EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "384"))
+
+    # Heavy ML models now lazy-loaded via properties to avoid loading during migrations
+    _embedding_model_instance = None
+    _chunker_instance = None
+    _code_chunker_instance = None
+    _reranker_instance = None
 
     # Reranker's Configuration | Pinecode, Cohere etc. Read more at https://github.com/AnswerDotAI/rerankers?tab=readme-ov-file#usage
     RERANKERS_MODEL_NAME = os.getenv("RERANKERS_MODEL_NAME")
     RERANKERS_MODEL_TYPE = os.getenv("RERANKERS_MODEL_TYPE")
-    reranker_instance = Reranker(
-        model_name=RERANKERS_MODEL_NAME,
-        model_type=RERANKERS_MODEL_TYPE,
-    )
 
     # OAuth JWT
     SECRET_KEY = os.getenv("SECRET_KEY")
@@ -108,17 +103,58 @@ class Config:
     STT_SERVICE_API_BASE = os.getenv("STT_SERVICE_API_BASE")
     STT_SERVICE_API_KEY = os.getenv("STT_SERVICE_API_KEY")
 
-    # Validation Checks
-    # Check embedding dimension
-    if (
-        hasattr(embedding_model_instance, "dimension")
-        and embedding_model_instance.dimension > 2000
-    ):
-        raise ValueError(
-            f"Embedding dimension for Model: {EMBEDDING_MODEL} "
-            f"has {embedding_model_instance.dimension} dimensions, which "
-            f"exceeds the maximum of 2000 allowed by PGVector."
-        )
+    # Validation Checks moved to property accessors to avoid eager loading
+
+    @classmethod
+    def embedding_model_instance(cls):
+        """Lazy-load embedding model only when needed."""
+        if cls._embedding_model_instance is None:
+            from chonkie import AutoEmbeddings
+            cls._embedding_model_instance = AutoEmbeddings.get_embeddings(cls.EMBEDDING_MODEL)
+            # Check embedding dimension
+            if (
+                hasattr(cls._embedding_model_instance, "dimension")
+                and cls._embedding_model_instance.dimension > 2000
+            ):
+                raise ValueError(
+                    f"Embedding dimension for Model: {cls.EMBEDDING_MODEL} "
+                    f"has {cls._embedding_model_instance.dimension} dimensions, which "
+                    f"exceeds the maximum of 2000 allowed by PGVector."
+                )
+        return cls._embedding_model_instance
+
+    @classmethod
+    def chunker_instance(cls):
+        """Lazy-load chunker only when needed."""
+        if cls._chunker_instance is None:
+            from chonkie import RecursiveChunker
+            embedding = cls.embedding_model_instance()
+            cls._chunker_instance = RecursiveChunker(
+                chunk_size=getattr(embedding, "max_seq_length", 512)
+            )
+        return cls._chunker_instance
+
+    @classmethod
+    def code_chunker_instance(cls):
+        """Lazy-load code chunker only when needed."""
+        if cls._code_chunker_instance is None:
+            from chonkie import CodeChunker
+            embedding = cls.embedding_model_instance()
+            cls._code_chunker_instance = CodeChunker(
+                chunk_size=getattr(embedding, "max_seq_length", 512)
+            )
+        return cls._code_chunker_instance
+
+    @classmethod
+    def reranker_instance(cls):
+        """Lazy-load reranker only when needed."""
+        if cls._reranker_instance is None:
+            from rerankers import Reranker
+            cls._reranker_instance = Reranker(
+                model_name=cls.RERANKERS_MODEL_NAME,
+                model_type=cls.RERANKERS_MODEL_TYPE,
+            )
+        return cls._reranker_instance
 
     @classmethod
     def get_settings(cls):

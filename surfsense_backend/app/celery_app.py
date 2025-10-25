@@ -9,6 +9,22 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Disable LangSmith tracing in Celery workers to avoid API errors
+os.environ["LANGCHAIN_TRACING_V2"] = "false"
+
+# Disable LiteLLM async logging to avoid event loop issues in Celery
+os.environ["LITELLM_DROP_PARAMS"] = "true"
+os.environ["LITELLM_LOG"] = "ERROR"  # Reduce logging verbosity
+
+# Import and configure litellm
+try:
+    import litellm
+    litellm.suppress_debug_info = True
+    litellm.drop_params = True
+    litellm.turn_off_message_logging = True
+except ImportError:
+    pass  # litellm not installed
+
 # Get Celery configuration from environment
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")

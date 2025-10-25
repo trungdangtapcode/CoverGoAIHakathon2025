@@ -303,7 +303,7 @@ async def index_airtable_records(
                                             f"Airtable Record: {record_id}\n\n"
                                         )
                                         summary_embedding = (
-                                            config.embedding_model_instance.embed(
+                                            config.embedding_model_instance().embed(
                                                 summary_content
                                             )
                                         )
@@ -357,7 +357,7 @@ async def index_airtable_records(
                                 # Fallback to simple summary if no LLM configured
                                 summary_content = f"Airtable Record: {record_id}\n\n"
                                 summary_embedding = (
-                                    config.embedding_model_instance.embed(
+                                    config.embedding_model_instance().embed(
                                         summary_content
                                     )
                                 )
