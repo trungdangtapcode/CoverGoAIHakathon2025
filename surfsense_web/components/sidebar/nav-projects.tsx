@@ -1,6 +1,8 @@
 "use client";
 
 import {
+	ChevronDown,
+	ChevronRight,
 	ExternalLink,
 	Folder,
 	type LucideIcon,
@@ -60,6 +62,8 @@ export function NavProjects({ chats }: { chats: ChatItem[] }) {
 	const router = useRouter();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [isDeleting, setIsDeleting] = useState<number | null>(null);
+	const [showSearch, setShowSearch] = useState(false);
+	const [isCollapsed, setIsCollapsed] = useState(false);
 
 	const searchSpaceId = chats[0]?.search_space_id || "";
 
@@ -141,48 +145,78 @@ export function NavProjects({ chats }: { chats: ChatItem[] }) {
 	);
 
 	// Show search input if there are chats
-	const showSearch = chats.length > 0;
+	const hasChats = chats.length > 0;
 
 	return (
 		<SidebarGroup className="group-data-[collapsible=icon]:hidden">
-			<SidebarGroupLabel>Recent Chats</SidebarGroupLabel>
-
-			{/* Search Input */}
-			{showSearch && (
-				<div className="px-2 pb-2">
-					<SidebarInput
-						placeholder="Search chats..."
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						className="h-8"
-					/>
+			<SidebarGroupLabel className="flex items-center justify-between">
+				<span>Recent Chats</span>
+				<div className="flex items-center gap-1">
+					{hasChats && !isCollapsed && (
+						<SidebarMenuButton
+							size="sm"
+							onClick={() => setShowSearch(!showSearch)}
+							className="h-6 w-6 p-0"
+						>
+							<Search className="h-3 w-3" />
+						</SidebarMenuButton>
+					)}
+					<SidebarMenuButton
+						size="sm"
+						onClick={() => setIsCollapsed(!isCollapsed)}
+						className="h-6 w-6 p-0"
+					>
+						{isCollapsed ? (
+							<ChevronRight className="h-3 w-3" />
+						) : (
+							<ChevronDown className="h-3 w-3" />
+						)}
+					</SidebarMenuButton>
 				</div>
+			</SidebarGroupLabel>
+
+			{!isCollapsed && (
+				<>
+					{/* Search Input */}
+					{showSearch && hasChats && (
+						<div className="px-2 pb-2">
+							<SidebarInput
+								placeholder="Search chats..."
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								className="h-8"
+							/>
+						</div>
+					)}
+
+					<SidebarMenu>
+						{/* Chat Items */}
+						{filteredChats.length > 0 ? (
+							filteredChats.map((chat) => <ChatItemComponent key={chat.id || chat.name} chat={chat} />)
+						) : (
+							/* No results state */
+							<SidebarMenuItem>
+								<SidebarMenuButton disabled className="text-muted-foreground">
+									<Search className="h-4 w-4" />
+									<span>{searchQuery ? "No chats found" : "No recent chats"}</span>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						)}
+					</SidebarMenu>
+				</>
 			)}
 
-			<SidebarMenu>
-				{/* Chat Items */}
-				{filteredChats.length > 0 ? (
-					filteredChats.map((chat) => <ChatItemComponent key={chat.id || chat.name} chat={chat} />)
-				) : (
-					/* No results state */
-					<SidebarMenuItem>
-						<SidebarMenuButton disabled className="text-muted-foreground">
-							<Search className="h-4 w-4" />
-							<span>{searchQuery ? "No chats found" : "No recent chats"}</span>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
-				)}
-
-				{/* View All Chats */}
-				{chats.length > 0 && (
+			{/* View All Chats - always visible */}
+			{hasChats && (
+				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton onClick={() => router.push(`/dashboard/${searchSpaceId}/chats`)}>
 							<MoreHorizontal />
 							<span>View All Chats</span>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
-				)}
-			</SidebarMenu>
+				</SidebarMenu>
+			)}
 		</SidebarGroup>
 	);
 }

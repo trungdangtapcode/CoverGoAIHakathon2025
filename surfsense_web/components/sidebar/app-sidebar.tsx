@@ -222,13 +222,15 @@ export const AppSidebar = memo(function AppSidebar({
 			</SidebarHeader>
 
 			<SidebarContent className="space-y-6">
-				<NavMain items={processedNavMain} />
-
+				{/* Recent Chats section - moved above Platform links */}
 				{processedRecentChats.length > 0 && (
 					<div className="space-y-2">
 						<NavProjects chats={processedRecentChats} />
 					</div>
 				)}
+
+				{/* Platform links */}
+				<NavMain items={processedNavMain} />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavSecondary items={processedNavSecondary} className="mt-auto" />
