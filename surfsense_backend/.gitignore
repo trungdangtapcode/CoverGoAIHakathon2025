@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# Python
+
 __pycache__/
 **/__pycache__/
 *.py[cod]
@@ -109,20 +108,3 @@ migration_output.log
 *.bak
 *.swp
 *.swo
-=======
-.flashrank_cache*
-podcasts/
-.env
-node_modules/
-.ruff_cache/
-.clinerules/byterover-rules.md
-.kilocode/rules/byterover-rules.md
-.roo/rules/byterover-rules.md
-.windsurf/rules/byterover-rules.md
-.cursor/rules/byterover-rules.mdc
-.kiro/steering/byterover-rules.md
-.qoder/rules/byterover-rules.md
-.augment/rules/byterover-rules.md
-*.log
-start_dev.sh
->>>>>>> b285107 (Initial commit: SurfSense project with frontend, backend, and browser extension)
