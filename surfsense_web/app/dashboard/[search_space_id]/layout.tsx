@@ -79,12 +79,15 @@ export default function DashboardLayout({
 			items: [],
 		},
 		{
+<<<<<<< HEAD
 			title: "Flashcards",
 			url: `/dashboard/${search_space_id}/flashcards`,
 			icon: "Brain",
 			items: [],
 		},
 		{
+=======
+>>>>>>> c34b206 (Initial commit: SurfSense project with frontend, backend, and browser extension)
 			title: "Logs",
 			url: `/dashboard/${search_space_id}/logs`,
 			icon: "FileText",
