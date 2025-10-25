@@ -445,7 +445,7 @@ class Task(BaseModel, TimestampMixin):
     search_space_id = Column(
         Integer, ForeignKey("searchspaces.id", ondelete="CASCADE"), nullable=False
     )
-    user_id = Column(UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
 
     title = Column(String(500), nullable=False)
     description = Column(Text, nullable=True)
@@ -479,7 +479,7 @@ class Note(BaseModel, TimestampMixin):
     search_space_id = Column(
         Integer, ForeignKey("searchspaces.id", ondelete="CASCADE"), nullable=False
     )
-    user_id = Column(UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
 
     title = Column(String(500), nullable=False)
     content = Column(Text, nullable=False)

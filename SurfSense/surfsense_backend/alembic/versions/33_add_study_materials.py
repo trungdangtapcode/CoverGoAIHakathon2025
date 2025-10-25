@@ -34,10 +34,14 @@ def upgrade() -> None:
             last_attempted_at TIMESTAMP,
 
             created_at TIMESTAMP DEFAULT NOW()
-        );
+        )
+        """
+    )
 
+    op.execute(
+        """
         CREATE INDEX IF NOT EXISTS idx_study_materials_space
-        ON study_materials(search_space_id, material_type);
+        ON study_materials(search_space_id, material_type)
         """
     )
 

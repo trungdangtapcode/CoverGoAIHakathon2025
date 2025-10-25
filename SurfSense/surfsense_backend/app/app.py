@@ -7,6 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import config
 from app.db import User, create_db_and_tables, get_async_session
 from app.routes import router as crud_router
+from app.routes.tasks_routes import router as tasks_router
+from app.routes.study_routes import router as study_router
+from app.routes.notes_routes import router as notes_router
 from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import SECRET, auth_backend, current_active_user, fastapi_users
 
@@ -77,6 +80,9 @@ if config.AUTH_TYPE == "GOOGLE":
     )
 
 app.include_router(crud_router, prefix="/api/v1", tags=["crud"])
+app.include_router(tasks_router, prefix="/api/v1", tags=["tasks"])
+app.include_router(study_router, prefix="/api/v1", tags=["study"])
+app.include_router(notes_router, prefix="/api/v1", tags=["notes"])
 
 
 @app.get("/verify-token")
