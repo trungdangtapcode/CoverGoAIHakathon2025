@@ -27,6 +27,7 @@ env/
 htmlcov/
 *.cover
 .hypothesis/
+app/__pycache__
 
 # Migrations (keep migration files but ignore pycache)
 alembic/versions/__pycache__/

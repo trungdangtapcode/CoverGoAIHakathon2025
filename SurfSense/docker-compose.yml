@@ -1,0 +1,133 @@
+version: "3.8"
+
+services:
+  db:
+    image: ankane/pgvector:latest
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-surfsense}
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@surfsense.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-surfsense}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  backend:
+    build: ./surfsense_backend
+    # image: ghcr.io/modsetter/surfsense_backend:latest
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./surfsense_backend/app:/app/app
+      - ./surfsense_backend/scripts:/app/scripts:ro
+      - shared_temp:/tmp
+    env_file:
+      - ./surfsense_backend/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-surfsense}
+      - CELERY_BROKER_URL=redis://redis:${REDIS_PORT:-6379}/0
+      - CELERY_RESULT_BACKEND=redis://redis:${REDIS_PORT:-6379}/0
+      - PYTHONPATH=/app
+      - UVICORN_LOOP=asyncio
+      - UNSTRUCTURED_HAS_PATCHED_LOOP=1
+      - LANGCHAIN_TRACING_V2=false
+      - LANGSMITH_TRACING=false
+    depends_on:
+      - db
+      - redis
+
+  # Run these services seperately in production
+  # celery_worker:
+  #   build: ./surfsense_backend
+  #   # image: ghcr.io/modsetter/surfsense_backend:latest
+  #   command: celery -A app.celery_app worker --loglevel=info --concurrency=1 --pool=solo
+  #   volumes:
+  #     - ./surfsense_backend:/app
+  #     - shared_temp:/tmp
+  #   env_file:
+  #     - ./surfsense_backend/.env
+  #   environment:
+  #     - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-surfsense}
+  #     - CELERY_BROKER_URL=redis://redis:${REDIS_PORT:-6379}/0
+  #     - CELERY_RESULT_BACKEND=redis://redis:${REDIS_PORT:-6379}/0
+  #     - PYTHONPATH=/app
+  #   depends_on:
+  #     - db
+  #     - redis
+  #     - backend
+
+  # celery_beat:
+  #   build: ./surfsense_backend
+  #   # image: ghcr.io/modsetter/surfsense_backend:latest
+  #   command: celery -A app.celery_app beat --loglevel=info
+  #   volumes:
+  #     - ./surfsense_backend:/app
+  #     - shared_temp:/tmp
+  #   env_file:
+  #     - ./surfsense_backend/.env
+  #   environment:
+  #     - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-surfsense}
+  #     - CELERY_BROKER_URL=redis://redis:${REDIS_PORT:-6379}/0
+  #     - CELERY_RESULT_BACKEND=redis://redis:${REDIS_PORT:-6379}/0
+  #     - PYTHONPATH=/app
+  #   depends_on:
+  #     - db
+  #     - redis
+  #     - celery_worker
+
+  # flower:
+  #   build: ./surfsense_backend
+  #   # image: ghcr.io/modsetter/surfsense_backend:latest
+  #   command: celery -A app.celery_app flower --port=5555
+  #   ports:
+  #     - "${FLOWER_PORT:-5555}:5555"
+  #   env_file:
+  #     - ./surfsense_backend/.env
+  #   environment:
+  #     - CELERY_BROKER_URL=redis://redis:${REDIS_PORT:-6379}/0
+  #     - CELERY_RESULT_BACKEND=redis://redis:${REDIS_PORT:-6379}/0
+  #     - PYTHONPATH=/app
+  #   depends_on:
+  #     - redis
+  #     - celery_worker
+
+  frontend:
+    build:
+      context: ./surfsense_web
+      # image: ghcr.io/modsetter/surfsense_ui:latest
+      args:
+        NEXT_PUBLIC_FASTAPI_BACKEND_URL: ${NEXT_PUBLIC_FASTAPI_BACKEND_URL:-http://localhost:8000}
+        NEXT_PUBLIC_FASTAPI_BACKEND_AUTH_TYPE: ${NEXT_PUBLIC_FASTAPI_BACKEND_AUTH_TYPE:-LOCAL}
+        NEXT_PUBLIC_ETL_SERVICE: ${NEXT_PUBLIC_ETL_SERVICE:-DOCLING}
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    env_file:
+      - ./surfsense_web/.env
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  redis_data:
+  shared_temp:
