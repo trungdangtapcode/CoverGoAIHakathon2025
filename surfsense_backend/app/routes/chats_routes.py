@@ -75,7 +75,19 @@ async def handle_chat_data(
     print(f"\n  Full request_data object: {request_data}")
     print("🔍" * 40 + "\n")
     # ===== END DETAILED INSPECTION =====
-    
+
+    # Extract task context for Work Mode
+    task_context = request_data.get("task_context")
+    if task_context:
+        print("\n" + "🎯" * 40)
+        print("🎯 WORK MODE - Task Context Detected:")
+        print(f"   Task ID: {task_context.get('task_id')}")
+        print(f"   Title: {task_context.get('task_title')}")
+        print(f"   Priority: {task_context.get('task_priority')}")
+        print(f"   Due Date: {task_context.get('task_due_date')}")
+        print(f"   Description: {task_context.get('task_description', 'N/A')[:100]}...")
+        print("🎯" * 40 + "\n")
+
     search_space_id = validate_search_space_id(request_data.get("search_space_id"))
     research_mode = validate_research_mode(request_data.get("research_mode"))
     selected_connectors = validate_connectors(request_data.get("selected_connectors"))
@@ -153,6 +165,7 @@ async def handle_chat_data(
             search_mode_str,
             document_ids_to_add_in_context,
             language,
+            task_context,
         )
     )
 

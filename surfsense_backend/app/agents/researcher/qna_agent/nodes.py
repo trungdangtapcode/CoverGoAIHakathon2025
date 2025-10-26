@@ -103,6 +103,10 @@ async def answer_question(state: State, config: RunnableConfig) -> dict[str, Any
     user_id = configuration.user_id
     search_space_id = configuration.search_space_id
     language = configuration.language
+    # Extract task_context for Work Mode
+    task_context = configuration.task_context
+    if task_context:
+        print(f"\n🔥 QNA Agent - Task Context Received: {task_context.get('task_title', 'N/A')}\n")
     # Get user's fast LLM
     llm = await get_user_fast_llm(state.db_session, user_id, search_space_id)
     if not llm:
@@ -128,7 +132,7 @@ async def answer_question(state: State, config: RunnableConfig) -> dict[str, Any
 
         # Use initial system prompt for token calculation
         initial_system_prompt = get_qna_citation_system_prompt(
-            chat_history_str, language
+            chat_history_str, language, task_context
         )
         base_messages = [
             SystemMessage(content=initial_system_prompt),
@@ -148,10 +152,13 @@ async def answer_question(state: State, config: RunnableConfig) -> dict[str, Any
 
     # Choose system prompt based on final document availability
     system_prompt = (
-        get_qna_citation_system_prompt(chat_history_str, language)
+        get_qna_citation_system_prompt(chat_history_str, language, task_context)
         if has_documents
-        else get_qna_no_documents_system_prompt(chat_history_str, language)
+        else get_qna_no_documents_system_prompt(chat_history_str, language, task_context)
     )
+
+    # Debug: Print first 500 chars of system prompt to verify task context injection
+    print(f"\n🔥 System Prompt Preview (first 500 chars):\n{system_prompt[:500]}\n")
 
     # Generate documents section
     documents_text = (

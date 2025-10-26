@@ -506,7 +506,6 @@ class Task(BaseModel, TimestampMixin):
 
     # Timestamps
     due_date = Column(TIMESTAMP, nullable=True)
-    updated_at = Column(TIMESTAMP, nullable=True)
     completed_at = Column(TIMESTAMP, nullable=True)
 
     # Auto-linked resources

@@ -73,6 +73,12 @@ export default function DashboardLayout({
 			],
 		},
 		{
+			title: "Work Mode",
+			url: `/dashboard/${search_space_id}/work`,
+			icon: "Briefcase",
+			items: [],
+		},
+		{
 			title: "Podcasts",
 			url: `/dashboard/${search_space_id}/podcasts`,
 			icon: "Podcast",

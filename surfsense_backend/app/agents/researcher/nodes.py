@@ -2078,6 +2078,7 @@ async def handle_qna_workflow(
             "user_id": configuration.user_id,
             "search_space_id": configuration.search_space_id,
             "language": configuration.language,
+            "task_context": configuration.task_context,  # Pass task context for Work Mode
         }
     }
 

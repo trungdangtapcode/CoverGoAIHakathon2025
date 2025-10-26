@@ -21,6 +21,7 @@ class Configuration:
     user_id: str  # User identifier
     search_space_id: int  # Search space identifier
     language: str | None = None  # Language for responses
+    task_context: dict | None = None  # Task context for Work Mode
 
     @classmethod
     def from_runnable_config(
