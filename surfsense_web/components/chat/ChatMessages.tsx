@@ -6,7 +6,7 @@ import {
 	type Message,
 	useChatUI,
 } from "@llamaindex/chat-ui";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatedEmptyState } from "@/components/chat/AnimatedEmptyState";
 import { CitationDisplay } from "@/components/chat/ChatCitation";
 import { ChatFurtherQuestions } from "@/components/chat/ChatFurtherQuestions";
@@ -18,25 +18,33 @@ export function ChatMessagesUI() {
 	const { messages } = useChatUI();
 
 	return (
-		<LlamaIndexChatMessages className="flex-1">
-			<LlamaIndexChatMessages.Empty>
-				<AnimatedEmptyState />
-			</LlamaIndexChatMessages.Empty>
-			<LlamaIndexChatMessages.List className="p-4">
-				{messages.map((message, index) => (
-					<ChatMessageUI
-						key={`Message-${index}`}
-						message={message}
-						isLast={index === messages.length - 1}
-					/>
-				))}
-			</LlamaIndexChatMessages.List>
-			<LlamaIndexChatMessages.Loading />
-		</LlamaIndexChatMessages>
+		<>
+			<LlamaIndexChatMessages className="flex-1">
+				<LlamaIndexChatMessages.Empty>
+					<AnimatedEmptyState />
+				</LlamaIndexChatMessages.Empty>
+				<LlamaIndexChatMessages.List className="p-4">
+					{messages.map((message, index) => (
+						<ChatMessageUI
+							key={`Message-${index}`}
+							message={message}
+							isLast={index === messages.length - 1}
+						/>
+					))}
+				</LlamaIndexChatMessages.List>
+				<LlamaIndexChatMessages.Loading />
+			</LlamaIndexChatMessages>
+		</>
 	);
 }
 
-function ChatMessageUI({ message, isLast }: { message: Message; isLast: boolean }) {
+function ChatMessageUI({ 
+	message, 
+	isLast
+}: { 
+	message: Message; 
+	isLast: boolean;
+}) {
 	const bottomRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -58,9 +66,9 @@ function ChatMessageUI({ message, isLast }: { message: Message; isLast: boolean 
 						/>
 					</LlamaIndexChatMessage.Content>
 					<div ref={bottomRef} />
-					<div className="flex flex-row justify-end gap-2">
+					<div className="flex flex-row justify-end gap-2 flex-wrap">
 						{isLast && <ChatFurtherQuestions message={message} />}
-						<LlamaIndexChatMessage.Actions className="flex-1 flex-col" />
+						<LlamaIndexChatMessage.Actions className="flex flex-row gap-2" />
 					</div>
 				</div>
 			) : (

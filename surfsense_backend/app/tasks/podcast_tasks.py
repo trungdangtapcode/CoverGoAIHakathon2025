@@ -83,7 +83,7 @@ async def generate_chat_podcast(
 
         chat_history_str += "</chat_history>"
 
-        # Pass it to the SurfSense Podcaster
+        # Pass it to the Strawberries Podcaster
         await task_logger.log_task_progress(
             log_entry,
             f"Initializing podcast generation for chat {chat_id}",
@@ -96,7 +96,7 @@ async def generate_chat_podcast(
 
         config = {
             "configurable": {
-                "podcast_title": "SurfSense",
+                "podcast_title": "Strawberries",
                 "user_id": str(user_id),
                 "search_space_id": search_space_id,
             }

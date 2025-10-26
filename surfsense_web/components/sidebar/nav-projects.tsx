@@ -7,6 +7,7 @@ import {
 	Folder,
 	type LucideIcon,
 	MoreHorizontal,
+	Plus,
 	RefreshCw,
 	Search,
 	Share,
@@ -152,6 +153,14 @@ export function NavProjects({ chats }: { chats: ChatItem[] }) {
 			<SidebarGroupLabel className="flex items-center justify-between">
 				<span>Recent Chats</span>
 				<div className="flex items-center gap-1">
+					<SidebarMenuButton
+						size="sm"
+						onClick={() => router.push(`/dashboard/${searchSpaceId}/researcher`)}
+						className="h-6 w-6 p-0"
+						title="New Chat"
+					>
+						<Plus className="h-3 w-3" />
+					</SidebarMenuButton>
 					{hasChats && !isCollapsed && (
 						<SidebarMenuButton
 							size="sm"

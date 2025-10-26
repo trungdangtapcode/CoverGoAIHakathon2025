@@ -33,6 +33,14 @@ export const metadata: Metadata = {
 		"AI collaboration tools",
 		"knowledge base",
 	],
+	icons: {
+		icon: [
+			{ url: "/logo.png", sizes: "32x32", type: "image/png" },
+			{ url: "/logo.png", sizes: "16x16", type: "image/png" },
+		],
+		shortcut: "/logo.png",
+		apple: "/logo.png",
+	},
 	openGraph: {
 		title: "Strawberries – AI Workspace Built for Teams",
 		description:
@@ -59,6 +67,10 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
+			<head>
+				<link rel="icon" href="/logo.png" type="image/png" />
+				<link rel="shortcut icon" href="/logo.png" type="image/png" />
+			</head>
 			<body className={cn(roboto.className, "bg-white dark:bg-black antialiased h-full w-full")}>
 				<ThemeProvider
 					attribute="class"

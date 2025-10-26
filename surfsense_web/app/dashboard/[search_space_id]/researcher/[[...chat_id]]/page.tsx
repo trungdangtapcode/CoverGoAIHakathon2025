@@ -130,6 +130,8 @@ export default function ResearcherPage() {
 	// Restore chat state from localStorage on page load
 	useEffect(() => {
 		if (chatIdParam && search_space_id) {
+			console.log(`🔄 Restoring chat state for chat ${chatIdParam}`);
+			
 			// First try the new format (from chat creation)
 			const initialStateKey = `chat_initial_state_${chatIdParam}`;
 			const initialState = localStorage.getItem(initialStateKey);
@@ -137,7 +139,9 @@ export default function ResearcherPage() {
 			if (initialState) {
 				try {
 					const parsed = JSON.parse(initialState);
+					console.log(`📦 Found initial state:`, parsed);
 					if (parsed.selectedDocuments) {
+						console.log(`📄 Setting selected documents from initial state:`, parsed.selectedDocuments.length);
 						setSelectedDocuments(parsed.selectedDocuments);
 					}
 					if (parsed.youtubeUrls) {
@@ -151,10 +155,16 @@ export default function ResearcherPage() {
 				// Fall back to old format
 				const restoredState = restoreChatState(search_space_id as string, chatIdParam);
 				if (restoredState) {
-					setSelectedDocuments(restoredState.selectedDocuments);
-					setSelectedConnectors(restoredState.selectedConnectors);
-					setSearchMode(restoredState.searchMode);
-					setResearchMode(restoredState.researchMode);
+					console.log(`📦 Found restored state:`, restoredState);
+					console.log(`📄 Setting selected documents from restored state:`, restoredState.selectedDocuments?.length || 0);
+					setSelectedDocuments(restoredState.selectedDocuments || []);
+					setSelectedConnectors(restoredState.selectedConnectors || []);
+					setSearchMode(restoredState.searchMode || "CHUNKS");
+					setResearchMode(restoredState.researchMode || "QNA");
+				} else {
+					console.log(`📦 No chat state found, keeping default empty state`);
+					// Ensure we start with empty state for existing chats without stored state
+					setSelectedDocuments([]);
 				}
 			}
 		}

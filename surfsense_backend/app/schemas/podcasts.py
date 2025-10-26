@@ -28,4 +28,4 @@ class PodcastGenerateRequest(BaseModel):
     type: Literal["DOCUMENT", "CHAT"]
     ids: list[int]
     search_space_id: int
-    podcast_title: str = "SurfSense Podcast"
+    podcast_title: str = "Strawberries Podcast"

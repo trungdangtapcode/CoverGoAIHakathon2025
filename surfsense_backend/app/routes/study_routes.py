@@ -143,3 +143,20 @@ async def get_performance_stats(
         return stats
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+
+
+@router.delete("/{material_id}")
+async def delete_study_material(
+    material_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+):
+    """
+    Delete a study material by ID.
+    """
+    service = StudyService(session)
+    try:
+        await service.delete_study_material(material_id)
+        return {"message": "Study material deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete material: {str(e)}")

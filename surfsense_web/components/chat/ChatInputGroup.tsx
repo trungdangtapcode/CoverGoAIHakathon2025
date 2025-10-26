@@ -1,7 +1,7 @@
 "use client";
 
 import { ChatInput } from "@llamaindex/chat-ui";
-import { Brain, Check, FolderOpen, Zap } from "lucide-react";
+import { Brain, Check, FolderOpen, Zap, Podcast } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { Suspense, useCallback, useState } from "react";
 import type { ResearchMode } from "@/components/chat";
@@ -14,9 +14,12 @@ import {
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
+	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -28,6 +31,7 @@ import { getConnectorIcon } from "@/contracts/enums/connectorIcons";
 import type { Document } from "@/hooks/use-documents";
 import { useLLMConfigs, useLLMPreferences } from "@/hooks/use-llm-configs";
 import { useSearchSourceConnectors } from "@/hooks/use-search-source-connectors";
+import { toast } from "sonner";
 
 const DocumentSelector = React.memo(
 	({
@@ -465,6 +469,140 @@ const LLMSelector = React.memo(() => {
 
 LLMSelector.displayName = "LLMSelector";
 
+const PodcastButton = React.memo(() => {
+	const [podcastDialogOpen, setPodcastDialogOpen] = useState(false);
+	const [podcastTitle, setPodcastTitle] = useState("");
+	const [isGeneratingPodcast, setIsGeneratingPodcast] = useState(false);
+	const { search_space_id, chat_id } = useParams();
+
+	const chatIdParam = Array.isArray(chat_id) ? chat_id[0] : chat_id;
+
+	const handleGeneratePodcast = async () => {
+		if (!chatIdParam) {
+			toast.error("Please start a chat conversation first");
+			return;
+		}
+
+		if (!podcastTitle.trim()) {
+			toast.error("Please enter a podcast title");
+			return;
+		}
+
+		setIsGeneratingPodcast(true);
+		try {
+			const token = localStorage.getItem("surfsense_bearer_token");
+			if (!token) {
+				toast.error("Authentication error. Please log in again.");
+				setIsGeneratingPodcast(false);
+				return;
+			}
+
+			const payload = {
+				type: "CHAT",
+				ids: [parseInt(chatIdParam)],
+				search_space_id: parseInt(search_space_id as string),
+				podcast_title: podcastTitle,
+			};
+
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_FASTAPI_BACKEND_URL}/api/v1/podcasts/generate/`,
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${token}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(payload),
+				}
+			);
+
+			if (!response.ok) {
+				const errorData = await response.json().catch(() => ({}));
+				throw new Error(errorData.detail || "Failed to generate podcast");
+			}
+
+			await response.json();
+			toast.success(`Podcast "${podcastTitle}" generation started!`);
+			setPodcastDialogOpen(false);
+			setPodcastTitle("");
+		} catch (error: any) {
+			console.error("Error generating podcast:", error);
+			toast.error(error.message || "Failed to generate podcast");
+		} finally {
+			setIsGeneratingPodcast(false);
+		}
+	};
+
+	return (
+		<>
+			<Button
+				variant="outline"
+				size="sm"
+				onClick={() => setPodcastDialogOpen(true)}
+				className="gap-2"
+			>
+				<Podcast className="h-4 w-4" />
+				Convert to Podcast
+			</Button>
+
+			<Dialog open={podcastDialogOpen} onOpenChange={setPodcastDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Convert Chat to Podcast</DialogTitle>
+						<DialogDescription>
+							Generate a podcast from this chat conversation. This will convert the entire conversation into an audio podcast.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="py-4">
+						<Label htmlFor="podcast-title" className="text-sm font-medium">
+							Podcast Title
+						</Label>
+						<Input
+							id="podcast-title"
+							placeholder="Enter podcast title..."
+							value={podcastTitle}
+							onChange={(e) => setPodcastTitle(e.target.value)}
+							className="mt-2"
+							disabled={isGeneratingPodcast}
+						/>
+					</div>
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onClick={() => {
+								setPodcastDialogOpen(false);
+								setPodcastTitle("");
+							}}
+							disabled={isGeneratingPodcast}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={handleGeneratePodcast}
+							disabled={isGeneratingPodcast || !podcastTitle.trim()}
+							className="gap-2"
+						>
+							{isGeneratingPodcast ? (
+								<>
+									<span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+									Generating...
+								</>
+							) : (
+								<>
+									<Podcast className="h-4 w-4" />
+									Convert to Podcast
+								</>
+							)}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
+	);
+});
+
+PodcastButton.displayName = "PodcastButton";
+
 const CustomChatInputOptions = React.memo(
 	({
 		onDocumentSelectionChange,
@@ -499,6 +637,7 @@ const CustomChatInputOptions = React.memo(
 					selectedConnectors={selectedConnectors}
 				/>
 				<LLMSelector />
+				<PodcastButton />
 			</div>
 		);
 	}

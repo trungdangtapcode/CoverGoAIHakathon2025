@@ -101,7 +101,7 @@ async def create_merged_podcast_audio(
     configuration = Configuration.from_runnable_config(config)
 
     starting_transcript = PodcastTranscriptEntry(
-        speaker_id=1, dialog=f"Welcome to {configuration.podcast_title} Podcast."
+        speaker_id=1, dialog=f"Welcome to {configuration.podcast_title}."
     )
 
     transcript = state.podcast_transcript

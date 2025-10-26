@@ -142,6 +142,18 @@ Generate {request.count} MCQs:"""
             "mastered_materials": len([m for m in materials if m.times_correct >= 3 and m.times_attempted >= 3]),
         }
 
+    async def delete_study_material(self, material_id: int) -> None:
+        """Delete a study material by ID"""
+        stmt = select(StudyMaterial).where(StudyMaterial.id == material_id)
+        result = await self.session.execute(stmt)
+        material = result.scalar_one_or_none()
+        
+        if not material:
+            raise ValueError(f"Study material with ID {material_id} not found")
+        
+        await self.session.delete(material)
+        await self.session.commit()
+
     # Helper methods for parsing LLM responses
 
     def _parse_flashcards(self, response: str, search_space_id: int, document_id: int) -> list[dict]:
