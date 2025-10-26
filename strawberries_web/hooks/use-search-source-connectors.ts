@@ -55,8 +55,8 @@ export const useSearchSourceConnectors = (lazy: boolean = false, searchSpaceId?:
 					url.searchParams.append("search_space_id", spaceId.toString());
 				}
 
-				const response = await fetch(url.toString(), {
-					method: "GET",
+			const response = await fetch(url.toString(), {
+					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${token}`,

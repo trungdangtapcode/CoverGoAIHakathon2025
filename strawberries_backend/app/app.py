@@ -85,7 +85,7 @@ app.include_router(study_router, prefix="/api/v1")
 app.include_router(notes_router, prefix="/api/v1")
 
 
-@app.get("/verify-token")
+@app.post("/verify-token")
 async def authenticated_route(
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(get_async_session),

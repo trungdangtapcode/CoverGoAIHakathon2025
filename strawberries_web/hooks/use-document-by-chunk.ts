@@ -49,14 +49,14 @@ export function useDocumentByChunk() {
 			setError(null);
 			setDocument(null);
 
-			const response = await fetch(
+		const response = await fetch(
 				`${process.env.NEXT_PUBLIC_FASTAPI_BACKEND_URL}/api/v1/documents/by-chunk/${chunkId}`,
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
 						"Content-Type": "application/json",
 					},
-					method: "GET",
+					method: "POST",
 				}
 			);
 

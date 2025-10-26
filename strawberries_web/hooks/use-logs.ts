@@ -100,8 +100,9 @@ export function useLogs(searchSpaceId?: number, filters: LogFilters = {}) {
 					{
 						headers: {
 							Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+							"Content-Type": "application/json",
 						},
-						method: "GET",
+						method: "POST",
 					}
 				);
 
@@ -245,8 +246,9 @@ export function useLogs(searchSpaceId?: number, filters: LogFilters = {}) {
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+						"Content-Type": "application/json",
 					},
-					method: "GET",
+					method: "POST",
 				}
 			);
 
@@ -292,8 +294,9 @@ export function useLogsSummary(searchSpaceId: number, hours: number = 24) {
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+						"Content-Type": "application/json",
 					},
-					method: "GET",
+					method: "POST",
 				}
 			);
 

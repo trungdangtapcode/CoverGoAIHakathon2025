@@ -266,11 +266,14 @@ export default function FlashcardsPageClient({ searchSpaceId }: FlashcardsPageCl
 				search_space_id: searchSpaceId.toString(),
 			});
 
-			const response = await fetch(
+		const response = await fetch(
 				`${process.env.NEXT_PUBLIC_FASTAPI_BACKEND_URL}/api/v1/documents?${params.toString()}`,
 				{
-					headers: { Authorization: `Bearer ${token}` },
-					method: "GET",
+					headers: { 
+						Authorization: `Bearer ${token}`,
+						"Content-Type": "application/json",
+					},
+					method: "POST",
 				}
 			);
 

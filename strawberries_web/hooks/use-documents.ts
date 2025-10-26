@@ -83,8 +83,9 @@ export function useDocuments(searchSpaceId: number, options?: UseDocumentsOption
 					{
 						headers: {
 							Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+							"Content-Type": "application/json",
 						},
-						method: "GET",
+						method: "POST",
 					}
 				);
 
@@ -164,8 +165,9 @@ export function useDocuments(searchSpaceId: number, options?: UseDocumentsOption
 					{
 						headers: {
 							Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+							"Content-Type": "application/json",
 						},
-						method: "GET",
+						method: "POST",
 					}
 				);
 
@@ -233,8 +235,9 @@ export function useDocuments(searchSpaceId: number, options?: UseDocumentsOption
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+						"Content-Type": "application/json",
 					},
-					method: "GET",
+					method: "POST",
 				}
 			);
 

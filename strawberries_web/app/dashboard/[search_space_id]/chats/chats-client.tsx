@@ -162,13 +162,14 @@ export default function ChatsPageClient({ searchSpaceId }: ChatsPageClientProps)
 				page_size: "100",
 			});
 
-			const response = await fetch(
+		const response = await fetch(
 				`${process.env.NEXT_PUBLIC_FASTAPI_BACKEND_URL}/api/v1/documents?${params.toString()}`,
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,
+						"Content-Type": "application/json",
 					},
-					method: "GET",
+					method: "POST",
 				}
 			);
 

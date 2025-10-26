@@ -222,7 +222,7 @@ async def create_task(
         raise HTTPException(status_code=500, detail=f"Failed to create task: {str(e)}")
 
 
-@router.get("/{task_id}", response_model=TaskRead)
+@router.post("/{task_id}", response_model=TaskRead)
 async def get_task(
     task_id: int,
     session: AsyncSession = Depends(get_async_session),

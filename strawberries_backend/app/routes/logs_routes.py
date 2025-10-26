@@ -38,7 +38,7 @@ async def create_log(
         ) from e
 
 
-@router.get("/logs/", response_model=list[LogRead])
+@router.post("/logs/", response_model=list[LogRead])
 async def read_logs(
     skip: int = 0,
     limit: int = 100,
@@ -98,7 +98,7 @@ async def read_logs(
         ) from e
 
 
-@router.get("/logs/{log_id}", response_model=LogRead)
+@router.post("/logs/{log_id}", response_model=LogRead)
 async def read_log(
     log_id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -194,7 +194,7 @@ async def delete_log(
         ) from e
 
 
-@router.get("/logs/search-space/{search_space_id}/summary")
+@router.post("/logs/search-space/{search_space_id}/summary")
 async def get_logs_summary(
     search_space_id: int,
     hours: int = 24,

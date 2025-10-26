@@ -25,8 +25,9 @@ export function useSearchSpaces() {
 					{
 						headers: {
 							Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+							"Content-Type": "application/json",
 						},
-						method: "GET",
+						method: "POST",
 					}
 				);
 
@@ -58,8 +59,9 @@ export function useSearchSpaces() {
 				{
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+						"Content-Type": "application/json",
 					},
-					method: "GET",
+					method: "POST",
 				}
 			);
 

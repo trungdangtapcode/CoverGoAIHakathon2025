@@ -207,7 +207,7 @@ async def create_chat(
         ) from None
 
 
-@router.get("/chats/", response_model=list[ChatReadWithoutMessages])
+@router.post("/chats/", response_model=list[ChatReadWithoutMessages])
 async def read_chats(
     skip: int = 0,
     limit: int = 100,
@@ -260,7 +260,7 @@ async def read_chats(
         ) from None
 
 
-@router.get("/chats/{chat_id}", response_model=ChatRead)
+@router.post("/chats/{chat_id}", response_model=ChatRead)
 async def read_chat(
     chat_id: int,
     session: AsyncSession = Depends(get_async_session),

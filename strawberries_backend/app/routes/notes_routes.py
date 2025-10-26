@@ -89,7 +89,7 @@ async def search_notes(
         raise HTTPException(status_code=500, detail=f"Failed to search notes: {str(e)}")
 
 
-@router.get("/{search_space_id}", response_model=list[NoteRead])
+@router.post("/{search_space_id}", response_model=list[NoteRead])
 async def get_all_notes(
     search_space_id: int,
     session: AsyncSession = Depends(get_async_session),

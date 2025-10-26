@@ -50,13 +50,14 @@ export default function GoogleCalendarConnectorPage() {
 	const handleConnectGoogle = async () => {
 		try {
 			setIsConnecting(true);
-			// Call backend to initiate authorization flow
+		// Call backend to initiate authorization flow
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_FASTAPI_BACKEND_URL}/api/v1/auth/google/calendar/connector/add/?space_id=${searchSpaceId}`,
 				{
-					method: "GET",
+					method: "POST",
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+						"Content-Type": "application/json",
 					},
 				}
 			);

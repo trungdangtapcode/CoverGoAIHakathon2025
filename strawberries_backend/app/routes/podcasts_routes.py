@@ -54,7 +54,7 @@ async def create_podcast(
         ) from None
 
 
-@router.get("/podcasts/", response_model=list[PodcastRead])
+@router.post("/podcasts/", response_model=list[PodcastRead])
 async def read_podcasts(
     skip: int = 0,
     limit: int = 100,
@@ -78,7 +78,7 @@ async def read_podcasts(
         ) from None
 
 
-@router.get("/podcasts/{podcast_id}", response_model=PodcastRead)
+@router.post("/podcasts/{podcast_id}", response_model=PodcastRead)
 async def read_podcast(
     podcast_id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -237,7 +237,7 @@ async def generate_podcast(
         ) from e
 
 
-@router.get("/podcasts/{podcast_id}/stream")
+@router.post("/podcasts/{podcast_id}/stream")
 async def stream_podcast(
     podcast_id: int,
     session: AsyncSession = Depends(get_async_session),

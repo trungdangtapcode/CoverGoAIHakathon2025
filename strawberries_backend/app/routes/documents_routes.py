@@ -147,7 +147,7 @@ async def create_documents_file_upload(
         ) from e
 
 
-@router.get("/documents/", response_model=PaginatedResponse[DocumentRead])
+@router.post("/documents/", response_model=PaginatedResponse[DocumentRead])
 async def read_documents(
     skip: int | None = None,
     page: int | None = None,
@@ -248,7 +248,7 @@ async def read_documents(
         ) from e
 
 
-@router.get("/documents/search/", response_model=PaginatedResponse[DocumentRead])
+@router.post("/documents/search/", response_model=PaginatedResponse[DocumentRead])
 async def search_documents(
     title: str,
     skip: int | None = None,
@@ -353,7 +353,7 @@ async def search_documents(
         ) from e
 
 
-@router.get("/documents/{document_id}", response_model=DocumentRead)
+@router.post("/documents/{document_id}", response_model=DocumentRead)
 async def read_document(
     document_id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -466,7 +466,7 @@ async def delete_document(
         ) from e
 
 
-@router.get("/documents/type-counts/")
+@router.post("/documents/type-counts/")
 async def get_document_type_counts(
     search_space_id: int | None = None,
     session: AsyncSession = Depends(get_async_session),
@@ -506,7 +506,7 @@ async def get_document_type_counts(
         ) from e
 
 
-@router.get("/documents/by-chunk/{chunk_id}", response_model=DocumentWithChunksRead)
+@router.post("/documents/by-chunk/{chunk_id}", response_model=DocumentWithChunksRead)
 async def get_document_by_chunk_id(
     chunk_id: int,
     session: AsyncSession = Depends(get_async_session),

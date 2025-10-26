@@ -120,12 +120,15 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
  */
 export const apiClient = {
 	/**
-	 * Make a GET request
+	 * Make a GET request (converted to POST for ngrok compatibility)
+	 * This sends a POST request with the endpoint in the body to work around ngrok limitations
 	 */
 	async get<T>(endpoint: string, options?: RequestInit): Promise<T> {
+		// For ngrok compatibility, we'll use POST but keep the GET semantics
+		// The backend will need to accept POST requests for these endpoints
 		return request<T>(endpoint, {
 			...options,
-			method: "GET",
+			method: "POST",
 		});
 	},
 

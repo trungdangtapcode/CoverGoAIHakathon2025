@@ -112,7 +112,7 @@ async def create_llm_config(
         ) from e
 
 
-@router.get("/llm-configs/", response_model=list[LLMConfigRead])
+@router.post("/llm-configs/", response_model=list[LLMConfigRead])
 async def read_llm_configs(
     search_space_id: int,
     skip: int = 0,
@@ -140,7 +140,7 @@ async def read_llm_configs(
         ) from e
 
 
-@router.get("/llm-configs/{llm_config_id}", response_model=LLMConfigRead)
+@router.post("/llm-configs/{llm_config_id}", response_model=LLMConfigRead)
 async def read_llm_config(
     llm_config_id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -242,7 +242,7 @@ async def delete_llm_config(
 # User LLM Preferences endpoints
 
 
-@router.get(
+@router.post(
     "/search-spaces/{search_space_id}/llm-preferences",
     response_model=LLMPreferencesRead,
 )

@@ -49,9 +49,10 @@ export default function AirtableConnectorPage() {
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_FASTAPI_BACKEND_URL}/api/v1/auth/airtable/connector/add/?space_id=${searchSpaceId}`,
 				{
-					method: "GET",
+					method: "POST",
 					headers: {
 						Authorization: `Bearer ${localStorage.getItem("surfsense_bearer_token")}`,
+						"Content-Type": "application/json",
 					},
 				}
 			);

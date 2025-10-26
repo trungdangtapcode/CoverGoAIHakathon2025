@@ -189,7 +189,7 @@ async def create_search_source_connector(
         ) from e
 
 
-@router.get(
+@router.post(
     "/search-source-connectors/", response_model=list[SearchSourceConnectorRead]
 )
 async def read_search_source_connectors(
@@ -222,7 +222,7 @@ async def read_search_source_connectors(
         ) from e
 
 
-@router.get(
+@router.post(
     "/search-source-connectors/{connector_id}", response_model=SearchSourceConnectorRead
 )
 async def read_search_source_connector(

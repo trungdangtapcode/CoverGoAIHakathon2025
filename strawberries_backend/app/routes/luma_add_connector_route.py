@@ -170,7 +170,7 @@ async def delete_luma_connector(
         ) from e
 
 
-@router.get("/connectors/luma/test")
+@router.post("/connectors/luma/test")
 async def test_luma_connector(
     space_id: int,
     user: User = Depends(current_active_user),

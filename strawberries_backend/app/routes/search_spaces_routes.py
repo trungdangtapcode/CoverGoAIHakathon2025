@@ -39,7 +39,7 @@ async def create_search_space(
         ) from e
 
 
-@router.get("/searchspaces/", response_model=list[SearchSpaceRead])
+@router.post("/searchspaces/", response_model=list[SearchSpaceRead])
 async def read_search_spaces(
     skip: int = 0,
     limit: int = 200,
@@ -60,7 +60,7 @@ async def read_search_spaces(
         ) from e
 
 
-@router.get("/searchspaces/{search_space_id}", response_model=SearchSpaceRead)
+@router.post("/searchspaces/{search_space_id}", response_model=SearchSpaceRead)
 async def read_search_space(
     search_space_id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -257,7 +257,7 @@ async def unlink_search_spaces(
         ) from e
 
 
-@router.get("/searchspaces/{search_space_id}/links", response_model=dict)
+@router.post("/searchspaces/{search_space_id}/links", response_model=dict)
 async def get_search_space_links(
     search_space_id: int,
     session: AsyncSession = Depends(get_async_session),

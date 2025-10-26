@@ -77,7 +77,7 @@ Correct: C"""
         raise HTTPException(status_code=500, detail=f"Failed to generate materials: {str(e)}")
 
 
-@router.get("/{search_space_id}", response_model=list[StudyMaterialRead])
+@router.post("/{search_space_id}", response_model=list[StudyMaterialRead])
 async def get_study_materials(
     search_space_id: int,
     material_type: str = None,
@@ -119,7 +119,7 @@ async def record_attempt(
         raise HTTPException(status_code=500, detail=f"Failed to record attempt: {str(e)}")
 
 
-@router.get("/stats/{search_space_id}")
+@router.post("/stats/{search_space_id}")
 async def get_performance_stats(
     search_space_id: int,
     session: AsyncSession = Depends(get_async_session),
